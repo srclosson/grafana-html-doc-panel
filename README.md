@@ -8,7 +8,7 @@ Important: This panel is alpha quality! Use at your own risk!
 
 # Screenshot
 
-![](https://github.com/srclosson/grafana-html-div-panel/raw/master/src/img/editor.png)
+![](https://raw.githubusercontent.com/srclosson/grafana-html-doc-panel/master/src/img/Editor.PNG)
 
 
 # Build plugin
