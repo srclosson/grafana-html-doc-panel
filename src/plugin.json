@@ -1,0 +1,22 @@
+{
+  "type": "panel",
+  "name": "HTML Documentation (Editor)",
+  "id": "grafana-html-doc-panel",
+  "info": {
+    "description": "HTML Documentation panel with tinymce editor",
+    "author": {
+      "name": "Stephanie Closson",
+      "url": "srclosson@gmail.com"
+    },
+    "keywords": [ ],
+    "logos": { },
+    "links": [ ],
+    "screenshots": [ ],
+    "version": "0.0.1",
+    "updated": "2019-02-17"
+  },
+  "dependencies": {
+    "grafanaVersion": "4.6.x",
+    "plugins": [ ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "grafana-html-doc-panel",
+  "version": "1.0.0",
+  "description": "Panel employing and editor for html documentation",
+  "main": "dist/module.js",
+  "scripts": {
+    "build": "webpack --config build/webpack.prod.conf.js",
+    "dev": "webpack --config build/webpack.dev.conf.js"
+  },
+  "keywords": [],
+  "author": "Stephanie Closson",
+  "license": "MIT",
+  "repository": "https://github.com/srclosson/grafana-html-doc-panel",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.7.0",
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.28.9",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "loader-utils": "^1.1.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.20.1",
+    "webpack": "^3.6.0"
+  },
+  "dependencies": {
+    "@tinymce/tinymce-angular": "^3.0.0",
+    "@types/tinymce": "^4.5.18",
+    "tinymce": "^5.0.0"
+  }
+}
