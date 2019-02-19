@@ -1,11 +1,12 @@
 import { PanelCtrl } from 'grafana/app/plugins/sdk'; 
-import tinymce from 'tinymce/tinymce';
+import tinymce from 'tinymce/tinymce.min';
 import 'tinymce/themes/silver/theme.min';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/anchor';
 import 'tinymce/plugins/autolink';
 import 'tinymce/plugins/paste';
 import 'tinymce/plugins/link';
+import 'tinymce/plugins/lists';
 import 'tinymce/plugins/fullscreen';
 import 'tinymce/plugins/image';
 import 'tinymce/plugins/imagetools';
@@ -16,57 +17,58 @@ import 'tinymce/plugins/visualblocks';
 import './css/panel.base.scss';
 
 class HtmlDocCtrl extends PanelCtrl {
-  constructor($scope, $injector) {
+  constructor($scope, $injector, templateSrv, $sce) {
     super($scope, $injector);
+    this.templateSrv = templateSrv;
+    this.$sce = $sce;
+    
     const panelDefaults = {
-      userHtml: '<p>Documentation</p>',
-      editor: null,
+      content: ""
     };
     
     _.defaults(this.panel, panelDefaults);
     
-    this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
     this.events.on('refresh', this.onRefresh.bind(this));
-    this.events.on('render', this.onRefresh.bind(this));
-    
-    //$scope.$watch(
-    //  'ctrl.panel.userHtml',
-    //  _.throttle(() => {
-    //    this.render();
-    //  }, 1000)
-    //);
+    this.events.on('render', this.onRender.bind(this));
   }
   
-  onInitEditMode() {
-    this.addEditorTab('Contents', `${this.panelPath}/partials/editor-html.html`);
-  }
   
   onRefresh() {
-    let content = (this.panel.editor) ? this.panel.editor.getContent() : this.panel.userHtml;
-    this.panel.userHtml = content;
-    $('#html-doc-panel').html(content);
+    this.render();
+  }
+
+  onRender() {
+    if (this.panel.isEditing && tinymce.editors.length == 0) {
+      tinymce.init({
+        target: this.container[0],
+        inline: true,
+        relative_urls: false,
+        plugins: 'link paste lists advlist anchor autolink fullscreen image imagetools table searchreplace visualblocks',
+        toolbar: 'formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | bullist numlist outdent indent | table | fullscreen | image imagetools',
+        menubar: false,
+        skin_url: `${this.panelPath}lib/tinymce/skins/ui/oxide-dark`
+      });
+      
+      return;
+    }
+    
+    if (tinymce.editors.length > 0) {
+      let content = tinymce.editors[0].getContent(); 
+      // Only update the panel if there is something new to update. 
+      // Length of 0 is not valid.
+      if (content.length > 0) {
+        this.panel.content = content;
+      }
+      if (!this.panel.isEditing) tinymce.remove();
+    }
+    
+    console.log("content", this.panel.content);
+    this.container.html(this.panel.content);
+    
+    this.renderingCompleted();
   }
   
-  doShowTinyMce(selector) {
-    var self = this;
-    if (self.panel.editor) {
-      tinymce.remove();
-      self.panel.editor = null;
-    }
-    tinymce.init({
-      selector: selector,
-      inline: true,
-      plugins: 'link paste advlist anchor autolink fullscreen image imagetools table searchreplace visualblocks',
-      toolbar: 'formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist advlist outdent indent | table | fullscreen | image imagetools',
-      skin_url: `${this.panelPath}lib/tinymce/skins/ui/oxide-dark`,
-      setup: function (editor) {
-        editor.on('init', function (e) {
-          self.panel.editor = e.target;
-          self.panel.editor.setContent(self.panel.userHtml);
-        });
-      }
-    });
-    
+  doShow() {
     return true;
   }
 
@@ -83,6 +85,8 @@ class HtmlDocCtrl extends PanelCtrl {
   
   link(scope, elem, attrs, ctrl) {
     this.initStyles();
+    ctrl.elem = elem;
+    ctrl.container = elem.find('#html-doc-panel');
   }
 }
 
